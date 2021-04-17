@@ -9,7 +9,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/', router);
+app.use('/users', router);
 
 mongoose.connect(DB_URL, {
   useNowUrlParser: true,

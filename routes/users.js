@@ -1,23 +1,10 @@
 const users = require('express').Router();
-const User = require('../models/user');
+const { createUser, getUserList, getUserById } = require('../controllers/users');
 
-users.get('/', (req, res) => {
-  User.find({})
-    .then((userList) => res.send({ data: userList }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
-});
+users.get('/', getUserList);
 
-users.get('/:id', (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
-});
+users.get('/:id', getUserById);
 
-users.post('/', (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
-});
+users.post('/', createUser);
 
 module.exports = users;

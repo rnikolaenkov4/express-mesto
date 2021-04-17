@@ -3,7 +3,7 @@ const User = require('../models/user');
 
 users.get('/', (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((userList) => res.send({ data: userList }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 });
 

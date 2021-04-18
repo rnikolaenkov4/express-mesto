@@ -25,12 +25,12 @@ module.exports.getCardList = (req, res) => {
     });
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.delete = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((cardList) => res.send({ data: cardList }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Карточка с указанным _id не найдена.' });
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
       }
       res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });

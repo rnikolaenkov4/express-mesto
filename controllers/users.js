@@ -37,7 +37,7 @@ module.exports.updateUserInfo = (req, res) => {
   const { _id } = req.user;
 
   User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true, upsert: true })
-    .then((user) => res.send({ data: user}))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });

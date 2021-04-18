@@ -21,3 +21,12 @@ module.exports.getCardList = (req, res) => {
       res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
+
+module.exports.likeCard = (req, res) => {
+  Card.findByIdAndUpdate(req.params.cardId,
+    { $addToSet: { likes: req.user._id } }, { new: true })
+    .then((cardList) => res.send({ data: cardList }))
+    .catch((err) => {
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};

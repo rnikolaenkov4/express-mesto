@@ -8,9 +8,9 @@ module.exports.createCard = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
+      res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
@@ -18,7 +18,10 @@ module.exports.getCardList = (req, res) => {
   Card.find({})
     .then((cardList) => res.send({ data: cardList }))
     .catch((err) => {
-      res.status(500).send({ message: 'Произошла ошибка' });
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
+      }
+      res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
@@ -27,6 +30,9 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, { new: true })
     .then((cardList) => res.send({ data: cardList }))
     .catch((err) => {
-      res.status(500).send({ message: 'Произошла ошибка' });
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
+      }
+      res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });
 };

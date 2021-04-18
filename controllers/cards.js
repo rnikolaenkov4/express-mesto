@@ -25,6 +25,17 @@ module.exports.getCardList = (req, res) => {
     });
 };
 
+module.exports.deleteCard = (req, res) => {
+  Card.findByIdAndRemove(req.params.cardId)
+    .then((cardList) => res.send({ data: cardList }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена.' });
+      }
+      res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
+};
+
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId,
     { $addToSet: { likes: req.user._id } }, { new: true })

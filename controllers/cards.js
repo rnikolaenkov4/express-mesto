@@ -2,7 +2,7 @@ const Card = require('../models/card');
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  const _id = req.user._id;
+  const { _id } = req.user;
 
   Card.create({ name, link, owner: _id })
     .then((user) => res.send({ data: user }))

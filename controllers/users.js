@@ -31,3 +31,20 @@ module.exports.getUserById = (req, res) => {
       res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
+
+module.exports.updateUserInfo = (req, res) => {
+  const { name, about } = req.body;
+  const { _id } = req.user;
+
+  User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true, upsert: true })
+    .then((user) => res.send({ data: user}))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      }
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+      }
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};

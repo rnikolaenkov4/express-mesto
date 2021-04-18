@@ -1,5 +1,5 @@
+const { ObjectId } = require('mongoose').Types.ObjectId;
 const User = require('../models/user');
-const ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -25,7 +25,7 @@ module.exports.getUserList = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   try {
-    if(!ObjectId.isValid(req.params.id)) {
+    if (!ObjectId.isValid(req.params.id)) {
       throw new Error('Not valid _id');
     }
 
@@ -40,7 +40,6 @@ module.exports.getUserById = (req, res) => {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       });
   } catch (err) {
-
     if (err.message === 'Not valid _id') {
       res.status(400).send({ message: 'Переданы некорректные данные.' });
       return;
@@ -68,7 +67,6 @@ module.exports.updateUserInfo = (req, res) => {
         }
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       });
-
   } catch (err) {
     res.status(500).send({ message: 'Ошибка по умолчанию.' });
   }
@@ -92,7 +90,7 @@ module.exports.updateUserAvatar = (req, res) => {
         }
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       });
-    } catch (err) {
-      res.status(500).send({ message: 'Ошибка по умолчанию.' });
-    }
+  } catch (err) {
+    res.status(500).send({ message: 'Ошибка по умолчанию.' });
+  }
 };

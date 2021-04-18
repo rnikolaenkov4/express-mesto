@@ -1,5 +1,5 @@
+const { ObjectId } = require('mongoose').Types;
 const Card = require('../models/card');
-const ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -19,14 +19,14 @@ module.exports.createCard = (req, res) => {
 module.exports.getCardList = (req, res) => {
   Card.find({})
     .then((cardList) => res.send({ data: cardList }))
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
 module.exports.deleteCard = (req, res) => {
   try {
-    if(!ObjectId.isValid(req.params.cardId)) {
+    if (!ObjectId.isValid(req.params.cardId)) {
       throw new Error('Not valid _id');
     }
 
@@ -57,7 +57,7 @@ module.exports.deleteCard = (req, res) => {
 
 module.exports.likeCard = (req, res) => {
   try {
-    if(!ObjectId.isValid(req.params.cardId)) {
+    if (!ObjectId.isValid(req.params.cardId)) {
       throw new Error('Not valid _id');
     }
 
@@ -88,7 +88,7 @@ module.exports.likeCard = (req, res) => {
 
 module.exports.dislikeCard = (req, res) => {
   try {
-    if(!ObjectId.isValid(req.params.cardId)) {
+    if (!ObjectId.isValid(req.params.cardId)) {
       throw new Error('Not valid _id');
     }
 

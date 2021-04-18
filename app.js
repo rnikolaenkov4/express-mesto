@@ -12,7 +12,6 @@ const app = express();
 app.use(helmet());
 app.use(express.json());
 
-
 app.use((req, res, next) => {
   req.user = {
     _id: '607ae7ef2a3ff04180a83032',
@@ -31,6 +30,4 @@ mongoose.connect(DB_URL, {
   useFindAndModify: false,
 });
 
-app.listen(PORT, () => {
-  console.log('Ура');
-});
+app.listen(PORT, () => {});

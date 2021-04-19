@@ -76,7 +76,7 @@ module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const { _id } = req.user;
   try {
-    User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true, upsert: true })
+    User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
       .orFail(() => new Error('User not found'))
       .then((user) => res.send({ data: user }))
       .catch((err) => {

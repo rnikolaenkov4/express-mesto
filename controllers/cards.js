@@ -40,7 +40,7 @@ module.exports.deleteCard = (req, res) => {
         }
 
         if (err.message === 'Not Found') {
-          res.status(400).send({ message: 'Карточка не найдена.' });
+          res.status(404).send({ message: 'Карточка не найдена.' });
           return;
         }
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
@@ -71,7 +71,7 @@ module.exports.likeCard = (req, res) => {
           return;
         }
         if (err.message === 'Not Found') {
-          res.status(400).send({ message: 'Карточка не найдена.' });
+          res.status(404).send({ message: 'Карточка не найдена.' });
           return;
         }
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
@@ -102,7 +102,7 @@ module.exports.dislikeCard = (req, res) => {
           return;
         }
         if (err.message === 'Not Found') {
-          res.status(400).send({ message: 'Карточка не найдена.' });
+          res.status(404).send({ message: 'Карточка не найдена.' });
           return;
         }
         res.status(500).send({ message: 'Ошибка по умолчанию.' });

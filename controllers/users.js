@@ -14,6 +14,7 @@ module.exports.createUser = (req, res) => {
     }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
+      console.log(err);
       if (err.code === 11000) {
         res.status(409).send({ message: 'При регистрации указан email, который уже существует на сервере.' });
       }

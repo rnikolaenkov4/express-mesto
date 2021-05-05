@@ -1,4 +1,5 @@
 const mogoose = require('mongoose');
+const validator = require('validator');
 
 const userSchema = new mogoose.Schema({
   name: {
@@ -24,6 +25,12 @@ const userSchema = new mogoose.Schema({
     type: String,
     required: true,
     unique: true,
+    validate: {
+      validator(v) {
+        return validator.isEmail(v);
+      },
+      message: () => 'Вы указали не email',
+    },
   },
 
   password: {

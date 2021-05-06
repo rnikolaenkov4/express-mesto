@@ -1,4 +1,6 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
 
 const CRYPT_ROUNDS = 10;
@@ -76,5 +78,22 @@ module.exports.updateUserAvatar = (req, res) => {
         res.status(404).send({ message: 'Пользователь с указанным _id не найден. ' });
       }
       res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
+};
+
+module.exports.login = (req, res) => {
+  const {
+    email, password,
+  } = req.body;
+
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+      res.send({ token });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
     });
 };

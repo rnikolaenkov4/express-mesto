@@ -47,6 +47,17 @@ module.exports.getUserById = (req, res) => {
     });
 };
 
+module.exports.getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
+      }
+      res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
+};
+
 module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   const { _id } = req.user;
@@ -89,7 +100,13 @@ module.exports.login = (req, res) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
-      res.send({ token });
+
+      res
+        .cookie('jwt', token, {
+          maxAge: 604800000,
+          httpOnly: true,
+        })
+        .send({ token });
     })
     .catch((err) => {
       res

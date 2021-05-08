@@ -30,9 +30,14 @@ module.exports.deleteCard = (req, res) => {
       throw new Error('Not valid _id');
     }
 
-    Card.findByIdAndRemove(req.params.cardId)
+    Card.findById(req.params.cardId)
       .orFail(() => new Error('Not Found'))
-      .then((cardList) => res.send({ data: cardList }))
+      .then((cardList) => {
+        if (cardList.owner !== req.user._id) {
+          return Promise.reject('Not owner');
+        }
+        res.send({ data: cardList });
+      })
       .catch((err) => {
         if (err.name === 'ValidationError') {
           res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
@@ -41,6 +46,11 @@ module.exports.deleteCard = (req, res) => {
 
         if (err.message === 'Not Found') {
           res.status(404).send({ message: 'Карточка не найдена.' });
+          return;
+        }
+
+        if (err === 'Not owner') {
+          res.status(403).send({ message: 'Удаление не возможно.' });
           return;
         }
         res.status(500).send({ message: 'Ошибка по умолчанию.' });

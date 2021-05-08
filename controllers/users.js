@@ -23,7 +23,7 @@ module.exports.createUser = (req, res, next) => {
       res.send({ data: { _id: user._id } });
     })
     .catch((err) => {
-      if (err.code === 11000) {
+      if (err.name === "MongoError" && err.code === 11000) {
         return next(new ConflictError('При регистрации указан email, который уже существует на сервере.'));
       }
 
@@ -91,7 +91,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+        return next(new BadRequestError(err.message));
       }
       if (err.name === 'CastError') {
         return next(new NotFoundError('Пользователь по указанному _id не найден.'));

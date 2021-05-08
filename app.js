@@ -5,17 +5,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
 
+const helmet = require('helmet');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 const auth = require('./middlewares/auth');
 const error = require('./middlewares/error');
 
-// const { SERVER_PORT = 3000 } = process.env;
-// const DB_URL = 'mongodb://localhost:27017/mestodb';
 const { login, createUser } = require('./controllers/users');
 
 const app = express();
 
+app.use(helmet());
 app.use(express.json());
 
 app.post('/signin', celebrate({

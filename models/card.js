@@ -1,4 +1,5 @@
 const mogoose = require('mongoose');
+const validator = require('validator');
 
 const cardSchema = new mogoose.Schema({
   name: {
@@ -11,6 +12,12 @@ const cardSchema = new mogoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator(v) {
+        return validator.isURL(v, { protocols: ['http', 'https'] });
+      },
+      message: () => 'Вы указали неправильный URL',
+    },
   },
 
   owner: {

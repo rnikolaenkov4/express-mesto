@@ -12,14 +12,6 @@ const app = express();
 
 app.use(express.json());
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '607ae7ef2a3ff04180a83032',
-//   };
-
-//   next();
-// });
-
 app.post('/signin', login);
 app.post('/signup', createUser);
 

@@ -12,14 +12,12 @@ const BadRequestError = require('../errors/bad-request-err');
 const UnauthorizedError = require('../errors/unauthorized-err');
 const InternalServerError = require('../errors/internal-server-err');
 
-// const CRYPT_ROUNDS = 10;
-
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
 
-  bcrypt.hash(password, parseInt(CRYPT_ROUNDS))
+  bcrypt.hash(password, parseInt(CRYPT_ROUNDS, 10))
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
@@ -27,15 +25,17 @@ module.exports.createUser = (req, res, next) => {
       res.send({ data: { _id: user._id } });
     })
     .catch((err) => {
-      if (err.name === "MongoError" && err.code === 11000) {
-        return next(new ConflictError('При регистрации указан email, который уже существует на сервере.'));
+      if (err.name === 'MongoError' && err.code === 11000) {
+        next(new ConflictError('При регистрации указан email, который уже существует на сервере.'));
+        return;
       }
 
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+        return;
       }
 
-      return next(new InternalServerError('Ошибка по умолчанию.'));
+      next(new InternalServerError('Ошибка по умолчанию.'));
     });
 };
 
@@ -50,10 +50,11 @@ module.exports.getUserById = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        return;
       }
 
-      return next(new InternalServerError('Ошибка по умолчанию.'));
+      next(new InternalServerError('Ошибка по умолчанию.'));
     });
 };
 
@@ -62,10 +63,11 @@ module.exports.getCurrentUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        return;
       }
 
-      return next(new InternalServerError('Ошибка по умолчанию.'));
+      next(new InternalServerError('Ошибка по умолчанию.'));
     });
 };
 
@@ -77,13 +79,15 @@ module.exports.updateUserInfo = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+        return;
       }
       if (err.name === 'CastError') {
-        return next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        return;
       }
 
-      return next(new InternalServerError('Ошибка по умолчанию.'));
+      next(new InternalServerError('Ошибка по умолчанию.'));
     });
 };
 
@@ -95,13 +99,15 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError(err.message));
+        next(new BadRequestError(err.message));
+        return;
       }
       if (err.name === 'CastError') {
-        return next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        return;
       }
 
-      return next(new InternalServerError('Ошибка по умолчанию.'));
+      next(new InternalServerError('Ошибка по умолчанию.'));
     });
 };
 

@@ -22,7 +22,7 @@ const userSchema = new mogoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator(v) {
-        return validator.isURL(v, { protocols: ['http', 'https'] });
+        return validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true });
       },
       message: () => 'Вы указали неправильный URL',
     },
@@ -48,7 +48,7 @@ const userSchema = new mogoose.Schema({
   },
 });
 
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
   return this.findOne({ email })
     .select('+password')
     .then((user) => {

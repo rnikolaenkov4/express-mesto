@@ -14,10 +14,11 @@ module.exports.createCard = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError(err.message));
+        next(new BadRequestError(err.message));
+        return;
       }
 
-      return next(new InternalServerError('Ошибка по умолчанию.'));
+      next(new InternalServerError('Ошибка по умолчанию.'));
     });
 };
 
@@ -28,85 +29,79 @@ module.exports.getCardList = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  try {
-    if (!ObjectId.isValid(req.params.cardId)) {
-      throw new BadRequestError('Не валидный id');
-    }
-
-    Card.findById(req.params.cardId)
-      .orFail(() => next(new NotFoundError('Карточка не найдена')))
-      .then((cardList) => {
-        if (cardList.owner !== req.user._id) {
-          return Promise.reject('Not owner');
-        }
-        res.send({ data: cardList });
-      })
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          return next(new BadRequestError('Переданы некорректные данные для постановки/снятии лайка.'));
-        }
-
-        if (err.message === 'Not Found') {
-          return next(new NotFoundError('Карточка не найдена'));
-        }
-
-        if (err === 'Not owner') {
-          return next(new ForbiddenError('Удаление не возможно. Не хватает прав'));
-        }
-
-        return next(new InternalServerError('Ошибка по умолчанию.'));
-      });
-  } catch (err) {
-    return next(err);
+  if (!ObjectId.isValid(req.params.cardId)) {
+    throw new BadRequestError('Не валидный id');
   }
+
+  Card.findById(req.params.cardId)
+    .orFail()
+    .then((cardList) => {
+      if (String(cardList.owner) !== req.user._id) {
+        next(new ForbiddenError('Удаление не возможно. Не хватает прав'));
+        return;
+      }
+      cardList.deleteOne();
+      res.send({ data: cardList });
+    })
+    .catch((err) => {
+      if (err.name === 'DocumentNotFoundError') {
+        next(new NotFoundError('Карточка не найдена'));
+        return;
+      }
+
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные для постановки/снятии лайка.'));
+        return;
+      }
+
+      next(new InternalServerError('Ошибка по умолчанию.'));
+    });
 };
 
 module.exports.likeCard = (req, res, next) => {
-  try {
-    if (!ObjectId.isValid(req.params.cardId)) {
-      throw new BadRequestError('Не валидный id');
-    }
-
-    Card.findByIdAndUpdate(req.params.cardId,
-      { $addToSet: { likes: req.user._id } }, { new: true })
-      .orFail(() => next(new NotFoundError('Карточка не найдена')))
-      .then((cardList) => res.send({ data: cardList }))
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          return next(new BadRequestError('Переданы некорректные данные для постановки/снятии лайка.'));
-        }
-        if (err.message === 'Not Found') {
-          return next(new NotFoundError('Карточка не найдена'));
-        }
-
-        return next(new InternalServerError('Ошибка по умолчанию.'));
-      });
-  } catch (err) {
-    return next(err);
+  if (!ObjectId.isValid(req.params.cardId)) {
+    throw new BadRequestError('Не валидный id');
   }
+
+  Card.findByIdAndUpdate(req.params.cardId,
+    { $addToSet: { likes: req.user._id } }, { new: true })
+    .orFail()
+    .then((cardList) => res.send({ data: cardList }))
+    .catch((err) => {
+      if (err.name === 'DocumentNotFoundError') {
+        next(new NotFoundError('Карточка не найдена'));
+        return;
+      }
+
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные для постановки/снятии лайка.'));
+        return;
+      }
+
+      next(new InternalServerError('Ошибка по умолчанию.'));
+    });
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  try {
-    if (!ObjectId.isValid(req.params.cardId)) {
-      throw new BadRequestError('Не валидный id');
-    }
-
-    Card.findByIdAndUpdate(req.params.cardId,
-      { $pull: { likes: req.user._id } }, { new: true })
-      .orFail(() => next(new NotFoundError('Карточка не найдена')))
-      .then((cardList) => res.send({ data: cardList }))
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          return next(new BadRequestError('Переданы некорректные данные для постановки/снятии лайка.'));
-        }
-        if (err.message === 'Not Found') {
-          return next(new NotFoundError('Карточка не найдена'));
-        }
-
-        return next(new InternalServerError('Ошибка по умолчанию.'));
-      });
-  } catch (err) {
-    return next(err);
+  if (!ObjectId.isValid(req.params.cardId)) {
+    throw new BadRequestError('Не валидный id');
   }
+
+  Card.findByIdAndUpdate(req.params.cardId,
+    { $pull: { likes: req.user._id } }, { new: true })
+    .orFail()
+    .then((cardList) => res.send({ data: cardList }))
+    .catch((err) => {
+      if (err.name === 'DocumentNotFoundError') {
+        next(new NotFoundError('Карточка не найдена'));
+        return;
+      }
+
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные для постановки/снятии лайка.'));
+        return;
+      }
+
+      next(new InternalServerError('Ошибка по умолчанию.'));
+    });
 };

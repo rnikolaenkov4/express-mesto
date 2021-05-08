@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 const auth = require('./middlewares/auth');
+const error = require('./middlewares/error');
+
 
 const { PORT = 3000 } = process.env;
 const DB_URL = 'mongodb://localhost:27017/mestodb';
@@ -24,6 +26,8 @@ mongoose.connect(DB_URL, {
   useCreateIndex: true,
   useFindAndModify: false,
 });
+
+app.use(error);
 
 app.listen(PORT, () => {
   console.log('Ура');

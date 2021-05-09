@@ -6,8 +6,11 @@ const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
 
 const helmet = require('helmet');
+
 const users = require('./routes/users');
 const cards = require('./routes/cards');
+const routes = require('./routes/routes');
+
 const auth = require('./middlewares/auth');
 const error = require('./middlewares/error');
 
@@ -35,6 +38,7 @@ app.post('/signup', celebrate({
 app.use(auth);
 app.use('/users', users);
 app.use('/cards', cards);
+app.use('*', routes);
 
 mongoose.connect(DB_URL, {
   useNowUrlParser: true,

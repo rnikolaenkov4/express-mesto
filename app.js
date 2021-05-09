@@ -3,7 +3,7 @@ require('dotenv').config();
 const { SERVER_PORT = 3000, DB_URL } = process.env;
 const express = require('express');
 const mongoose = require('mongoose');
-const rateLimit = require("express-rate-limit");
+const rateLimit = require('express-rate-limit');
 const { celebrate, Joi, errors } = require('celebrate');
 
 const helmet = require('helmet');
@@ -60,6 +60,4 @@ mongoose.connect(DB_URL, {
 app.use(errors());
 app.use(error);
 
-app.listen(SERVER_PORT, () => {
-  console.log('Ура');
-});
+app.listen(SERVER_PORT, () => {});
